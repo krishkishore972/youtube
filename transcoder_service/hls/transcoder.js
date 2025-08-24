@@ -16,11 +16,11 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-// const mp4FileName = "trial1.mp4";
 const bucketName = process.env.AWS_BUCKET;
 const hlsFolder = "hls";
 
 const s3ToS3 = async (mp4FileName) => {
+
   console.log("Starting script");
   console.time("req_time");
   try {
@@ -129,8 +129,6 @@ const s3ToS3 = async (mp4FileName) => {
 
     fs.writeFileSync(masterPlaylistPath, masterPlaylist);
     console.log(`HLS master m3u8 playlist generated`);
-
-    console.log(`Deleting locally downloaded s3 mp4 file`);
     console.log(`Uploading media m3u8 playlists and ts segments to s3`);
     const files = fs.readdirSync(hlsFolder);
     for (const file of files) {
@@ -151,6 +149,10 @@ const s3ToS3 = async (mp4FileName) => {
       };
       await s3.upload(uploadParams).promise();
       fs.unlinkSync(filePath);
+    }
+    if (fs.existsSync("local.mp4")) {
+      fs.unlinkSync("local.mp4");
+      console.log("Deleted local.mp4");
     }
     console.log(
       `Uploaded media m3u8 playlists and ts segments to s3. Also deleted
