@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useVideoStore } from "@/app/zustand/useVideoStore";
+import Link from "next/link";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -43,24 +44,25 @@ lg:grid-cols-4 xl:grid-cols-5 gap-4 m-10"
         >
           {videos.map((video) => (
             <div key={video.id} className="border rounded-md overflow-hidden">
-              <div>
-                <ReactPlayer
-                  url={video.url}
-                  width="360px"
-                  height="180px"
-                  controls={true}
-                />
-              </div>
-              <div className="p-4">
-                <h2
-                  className="text-lg font-semibold
-mb-2"
-                >
-                  {video.title}
-                </h2>
-                <p className="text-gray-700">Author -{video.author}</p>
-                <p className="text-gray-700">{video.description}</p>
-              </div>
+              <Link href={`/watch/${video.id}`}>
+                <div className="cursor-pointer">
+                  <ReactPlayer
+                    url={video.url}
+                    width="360px"
+                    height="180px"
+                    controls={false}
+                  />
+                  <div className="p-4">
+                    <h2 className="text-lg font-semibold mb-2">
+                      {video.title}
+                    </h2>
+                    <p className="text-gray-700">Author - {video.author}</p>
+                    <p className="text-gray-700 truncate">
+                      {video.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
             </div>
           ))}
         </div>

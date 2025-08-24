@@ -1,44 +1,38 @@
 import AWS from "aws-sdk";
-
+import prisma from "../db/prismaClient.js";
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+  signatureVersion: "v4",
+});
 const watchVideo = async (req, res) => {
   try {
-    const videoKey = req.query.key;
-    if (!req.query.key) {
-      return res
-        .status(400)
-        .json({ error: "Missing required query parameter: key" });
+    const id = parseInt(req.params.id);
+    const video = await prisma.videoData.findUnique({
+      where: { id: id },
+    });
+    if (!video) {
+      return res.status(404).json({ error: "Video not found" });
     }
+    const bucketName = process.env.AWS_BUCKET;
+    const key = video.transcodedUrl.split(`${bucketName}/`)[1];
+    console.log(key);
+    
 
-    const signedUrl = await generateSignedUrl(videoKey);
-    res.json({ signedUrl });
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+      Expires: 60 * 60, // valid for 1 hour
+    };
+    // Generate signed URL only for .m3u8
+    const signedUrl = s3.getSignedUrl("getObject", params);
+
+      res.json({ signedUrl });
   } catch (error) {
-    console.error("Error generating pre-signed URL:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error in /watch/:id:", error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 };
-
-async function generateSignedUrl(videoKey) {
-  const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-  });
-
-  const params = {
-    Bucket: process.env.AWS_BUCKET,
-    Key: videoKey,
-    Expires: 3600, // URL expires in 1 hour, adjust as needed
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.getSignedUrl("getObject", params, (err, url) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(url);
-      }
-    });
-  });
-}
 
 export default watchVideo;

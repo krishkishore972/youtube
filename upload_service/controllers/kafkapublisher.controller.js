@@ -53,7 +53,7 @@ export const listenForTranscodedVideos = async () => {
   await kafkaUpload.consume("video-transcoded", async (message) => {
     try {
       const {filename , manifestUrl} = JSON.parse(message);
-      console.log("inside kafka lisner" ,filename, manifestUrl);
+      console.log("inside kafka listner" ,filename, manifestUrl);
 
       console.log(filename, manifestUrl);
       await updateVideoUrlInDB(filename, manifestUrl);

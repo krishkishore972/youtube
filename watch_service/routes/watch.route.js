@@ -4,8 +4,8 @@ import getAllVideos from "../controllers/home.controller.js"
 
 const router = express.Router();
 
-router.get("/",watchVideo);
 router.get("/home", getAllVideos);
+router.get("/:id",watchVideo);
 
 
 export default router;

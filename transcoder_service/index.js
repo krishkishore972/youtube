@@ -1,11 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-import cors from "cors";
-import KafkaConfig from "../upload_service/kafka/kafka.js";
+import KafkaConfig from "./kafka/kafka.js";
 import convertToHLS from "./hls/transcoder.js";
 import s3ToS3 from "./hls/transcoder.js";
+import cors from "cors";
 // import { pushUrlToUploadService } from "./hls/kafkapublisher.js";
-
 dotenv.config();
 
 const app = express();

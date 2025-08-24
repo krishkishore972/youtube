@@ -1,13 +1,12 @@
-import { PrismaClient } from "../generated/prisma/index.js";
+import prisma from "../db/prismaClient.js";
 const getAllVideos = async (req, res) => {
-  const prisma = new PrismaClient();
   try {
-    const allData = await prisma.$queryRaw`SELECT * FROM "VideoData"`;
-    console.log(allData);
-    return res.status(200).send(allData);
+    const videos = await prisma.videoData.findMany();
+    console.log(videos);
+    res.json(videos);
   } catch (error) {
-    console.log("Error fetching data:", error);
-    return res.status(400).send();
+    console.error("Error fetching videos:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 export default getAllVideos;

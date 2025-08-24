@@ -24,10 +24,6 @@ app.use(express.json());
 
 app.use("/watch",watchRouter)
 
-app.get("/" , (req,res) => {
-    res.send("hi from watch service")
-})
-
 app.listen(port ,() => {
 console.log("listning on port:",port);
 })

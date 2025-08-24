@@ -90,7 +90,7 @@ const s3ToS3 = async (mp4FileName) => {
             `-hls_list_size`,
             `0`,
             `-hls_segment_filename`,
-            `hls/${segmentFileName}`, 
+            `hls/${segmentFileName}`,
           ])
 
           .output(`hls/${outputFileName}`)
@@ -158,7 +158,7 @@ locally`
     );
     console.log("Success. Time taken: ");
     console.timeEnd("req_time");
-      const manifestUrl = `https://s3.${region}.amazonaws.com.${bucket}/hls/${masterPlaylistFileName}.m3u8`;
+      const manifestUrl = `https://s3.${region}.amazonaws.com/${bucket}/hls/${masterPlaylistFileName}`;
       console.log(manifestUrl);
       return manifestUrl;
   } catch (error) {
