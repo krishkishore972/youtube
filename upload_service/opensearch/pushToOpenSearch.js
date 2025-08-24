@@ -1,17 +1,13 @@
 import { Client } from "@opensearch-project/opensearch";
 
-const PushToOpenSearch = async (title, description, author, videoUrl) => {
+const PushToOpenSearch = async (id,title, description, author, videoUrl,filename) => {
   try {
     console.log("Pushing to openSearch");
-    let auth =  process.env.AUTH;
+
     let host =process.env.HOST
 
     let client = new Client({
-      node: host,
-      auth: {
-        username: process.env.USERNAME,
-        password: process.env.PASSWORD,
-      },
+      node: host
     });
 
     let index_name = "video";
@@ -20,10 +16,11 @@ const PushToOpenSearch = async (title, description, author, videoUrl) => {
       author: author,
       description: description,
       videoUrl: videoUrl,
+      filename:filename
     };
 
     let response = await client.index({
-      id: title, // id should ideally be db id
+      id: id, 
       index: index_name,
       body: document,
       refresh: true,

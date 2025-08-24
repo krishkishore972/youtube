@@ -114,7 +114,6 @@ export const completeUpload = async (req, res) => {
     console.log("Video uploaded at ", rawUrl);
     await addVideoDetailsToDB(title, description, author,rawUrl,fileName);
     await pushVideoForEncodingToKafka(title, fileName);
-    // PushToOpenSearch(title, description, author, url); //pushing non transcoded url, need to push manifest url
     return res.status(200).json({
       message: "Uploaded successfully!",
       url: rawUrl,

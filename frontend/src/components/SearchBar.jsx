@@ -1,27 +1,36 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useVideoStore } from "@/app/zustand/useVideoStore";
+import { useRouter } from "next/navigation";
+
 function SearchBar() {
   const [searchText, setSearchText] = useState("");
   const { updateSearchedVideos } = useVideoStore();
 
   const searchVideos = async () => {
-    try {
-      const res = await axios.get("", {
-        params: {
-          q: searchText,
-        },
-      });
-      console.log("Data received :", res.data);
-      updateSearchedVideos(res.data);
-      res.data.map((data) => {
-        console.log(data);
-        console.log("video url", data._source.videoUrl);
-      });
-    } catch (error) {
-      console.log("Error in searching : ", error.message);
-    }
-  };
+  try {
+    const res = await axios.get(
+      "https://5waj0vs641.execute-api.ap-south-1.amazonaws.com/search",
+      {
+        params: { q: searchText },
+      }
+    );
+
+    console.log("Data received :", res.data);
+
+    // Update your store with the actual array of results
+    updateSearchedVideos(res.data.data); // <-- use .data here
+
+    // Log each video
+    res.data.data.map((video) => {
+      console.log(video);
+      console.log("video url", video.videoUrl); // <-- not _source.videoUrl
+    });
+  } catch (error) {
+    console.log("Error in searching : ", error.message);
+  }
+};
+
 
   return (
     <div>
